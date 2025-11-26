@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>账单分摊器</title>
+  <style>
+    :root {
+      --primary-color: #1a73e8;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --text-color: #333;
+      --bg-color: #f4f7f9;
+      --card-bg: #fff;
+      --border-color: #ddd;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-bottom: 25px;
+    }
+
+    h2 {
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      margin-top: 0;
+      color: #444;
+      font-size: 1.25rem;
+    }
+
+    .section-card {
+      background-color: var(--card-bg);
+      padding: 25px;
+      margin-bottom: 25px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    /* 输入区域布局 */
+    .input-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      flex-grow: 1;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--primary-color);
+    }
+
+    .person-name-input {
+      width: 100px;
+      flex-grow: 0 !important;
+    }
+
+    .person-ratio-input {
+      width: 80px;
+      flex-grow: 0 !important;
+    }
+
+    button {
+      padding: 10px 18px;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      background-color: #1558b3;
+    }
+
+    button.btn-danger {
+      background-color: var(--danger-color);
+      padding: 5px 12px;
+      font-size: 0.85rem;
+    }
+
+    button.btn-danger:hover {
+      background-color: #c82333;
+    }
+
+    button.btn-edit {
+      background-color: #6c757d;
+      padding: 5px 12px;
+      font-size: 0.85rem;
+    }
+
+    button.btn-edit:hover {
+      background-color: #5a6268;
+    }
+
+    #custom-split-btn {
+      background: none;
+      border: none;
+      color: #3385FF;
+      padding: 0 10px;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    #custom-split-btn:hover {
+      text-decoration: underline;
+      color: #0062cc;
+    }
+
+    #custom-split-btn.active {
+      color: var(--success-color);
+    }
+
+    #custom-split-btn.active::before {
+      content: '✓ ';
+    }
+
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px dashed #eee;
+    }
+
+    .list-item:last-child {
+      border-bottom: none;
+    }
+
+    .item-info {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .summary-bar {
+      margin-top: 15px;
+      padding: 10px 15px;
+      background-color: #e8f0fe;
+      color: var(--primary-color);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .result-box {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #fafafa;
+      border-radius: 6px;
+      border: 1px solid #eee;
+    }
+
+    .amount-pos {
+      color: var(--success-color);
+      font-weight: bold;
+    }
+
+    .amount-neg {
+      color: var(--danger-color);
+      font-weight: bold;
+    }
+
+    /* 统计信息样式 (低调风格) */
+    .result-stats {
+      margin-top: 15px;
+      padding: 10px 15px;
+      background-color: #f8f9fa;
+      border: 1px solid #eee;
+      border-radius: 6px;
+      font-size: 0.9em;
+      color: #666;
+      line-height: 1.8;
+    }
+
+    .result-stats strong {
+      color: #444;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 8% auto;
+      padding: 25px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 550px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 15px;
+      margin-bottom: 15px;
+    }
+
+    .close-modal {
+      font-size: 24px;
+      cursor: pointer;
+      color: #aaa;
+    }
+
+    .close-modal:hover {
+      color: #333;
+    }
+
+    .split-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+
+    .split-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .split-val input {
+      width: 70px;
+      text-align: center;
+      padding: 5px;
+    }
+
+    .modal-footer {
+      margin-top: 20px;
+      text-align: right;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-info {
+      font-size: 0.85rem;
+      color: #666;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h1>🧾 账单分摊器</h1>
+
+    <section class="section-card">
+      <h2>1. 参与人员</h2>
+      <div id="people-list"></div>
+      <div class="input-group">
+        <input type="text" id="add-name" placeholder="姓名" class="person-name-input" style="flex-grow: 1;">
+        <input type="number" id="add-ratio" value="1.0" min="0.1" step="0.1" placeholder="比例"
+          class="person-ratio-input">
+        <button onclick="addPerson()">添加</button>
+      </div>
+      <div class="summary-bar">
+        当前总比例: <span id="total-ratio-display">0.0</span>
+        <span style="font-size: 0.8em; color: #666; margin-left: 10px;">(提示：比例为相对值，如 1:2 代表后者承担前者的两倍)</span>
+      </div>
+    </section>
+
+    <section class="section-card" id="bill-section">
+      <h2>2. 创建账单条目</h2>
+      <div id="bill-list"></div>
+
+      <div class="input-group" style="align-items: stretch;">
+        <input type="text" id="bill-desc" placeholder="描述 (如: 晚餐)" style="flex: 2;">
+        <input type="number" id="bill-amount" placeholder="金额 (¥)" min="0.01" step="0.01" style="flex: 1;"
+          oninput="resetCustomState()">
+        <select id="bill-payer" style="flex: 1.5;">
+          <option value="" disabled selected>付款人</option>
+        </select>
+      </div>
+
+      <div class="input-group" style="justify-content: flex-start; margin-top: 10px;">
+        <button id="btn-submit" onclick="submitItem()">添加</button>
+        <button id="btn-cancel" onclick="cancelEdit()" style="display: none; background-color: #6c757d;">取消修改</button>
+        <button id="custom-split-btn" onclick="openModal()">自定义分摊</button>
+      </div>
+    </section>
+
+    <section class="section-card">
+      <h2>3. 计算结果与转账方案</h2>
+      <button onclick="calculate()" style="width: 100%; font-size: 1.1rem;">开始计算</button>
+
+      <div id="result-stats" class="result-stats" style="display:none;"></div>
+
+      <div id="result-balances" class="result-box" style="display:none;"></div>
+      <div id="result-transfers" class="result-box" style="display:none;"></div>
+    </section>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 style="margin:0">自定义分摊比例</h3>
+        <span class="close-modal" onclick="closeModal()">&times;</span>
+      </div>
+      <div style="margin-bottom: 15px; color: #555;">
+        条目金额: <strong id="modal-amount">¥0.00</strong>
+      </div>
+      <div id="modal-list" style="max-height: 300px; overflow-y: auto;"></div>
+      <div class="modal-footer">
+        <div class="modal-info">选中人员参与分摊，可单独调整比例。</div>
+        <button onclick="saveModal()">保存设置</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- 数据状态 ---
+    let people = [];
+    let items = [];
+    let nextId = 1;
+    let isEditing = false;
+    let editId = null;
+    let tempCustomWeights = null;
+    let tempCustomSplits = null;
+
+    // --- DOM 元素快捷引用 ---
+    const els = {
+      peopleList: document.getElementById('people-list'),
+      totalRatio: document.getElementById('total-ratio-display'),
+      billList: document.getElementById('bill-list'),
+      payerSelect: document.getElementById('bill-payer'),
+      customBtn: document.getElementById('custom-split-btn'),
+      modal: document.getElementById('modal'),
+      modalList: document.getElementById('modal-list'),
+      resultBal: document.getElementById('result-balances'),
+      resultTrans: document.getElementById('result-transfers'),
+      resultStats: document.getElementById('result-stats'),
+      inputs: {
+        name: document.getElementById('add-name'),
+        ratio: document.getElementById('add-ratio'),
+        desc: document.getElementById('bill-desc'),
+        amount: document.getElementById('bill-amount'),
+        payer: document.getElementById('bill-payer')
+      },
+      btns: {
+        submit: document.getElementById('btn-submit'),
+        cancel: document.getElementById('btn-cancel')
+      }
+    };
+
+    // ================= 1. 人员管理 =================
+    function renderPeople() {
+      els.peopleList.innerHTML = '';
+      let sum = 0;
+      const currentPayer = els.inputs.payer.value;
+      els.inputs.payer.innerHTML = '<option value="" disabled selected>选择付款人</option>';
+
+      people.forEach((p, index) => {
+        sum += p.ratio;
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        div.innerHTML = `
+                <div class="item-info">
+                    <input type="text" value="${p.name}" class="person-name-input" onchange="updatePerson(${index}, 'name', this.value)">
+                    <span>比例:</span>
+                    <input type="number" value="${p.ratio}" class="person-ratio-input" min="0.1" step="0.1" onchange="updatePerson(${index}, 'ratio', this.value)">
+                </div>
+                <button class="btn-danger" onclick="removePerson(${index})">删除</button>
+            `;
+        els.peopleList.appendChild(div);
+
+        const opt = document.createElement('option');
+        opt.value = p.name;
+        opt.textContent = p.name;
+        els.inputs.payer.appendChild(opt);
+      });
+
+      if (currentPayer && people.some(p => p.name === currentPayer)) {
+        els.inputs.payer.value = currentPayer;
+      }
+      els.totalRatio.textContent = parseFloat(sum.toFixed(2));
+    }
+
+    function addPerson() {
+      const name = els.inputs.name.value.trim();
+      const ratio = parseFloat(els.inputs.ratio.value);
+      if (!name || ratio <= 0 || isNaN(ratio)) return alert('请输入有效姓名和比例');
+      if (people.some(p => p.name === name)) return alert('姓名已存在');
+
+      people.push({ name, ratio });
+      els.inputs.name.value = '';
+      els.inputs.ratio.value = '1.0';
+      resetCustomState();
+      renderPeople();
+    }
+
+    function updatePerson(index, key, val) {
+      if (key === 'name') {
+        const newName = val.trim();
+        if (!newName || (newName !== people[index].name && people.some(p => p.name === newName))) {
+          alert('姓名无效或已存在');
+          return renderPeople();
+        }
+        const oldName = people[index].name;
+        items.forEach(item => {
+          if (item.payer === oldName) item.payer = newName;
+          if (item.splits[oldName]) {
+            item.splits[newName] = item.splits[oldName];
+            delete item.splits[oldName];
+          }
+          if (item.customWeights && item.customWeights[oldName]) {
+            item.customWeights[newName] = item.customWeights[oldName];
+            delete item.customWeights[oldName];
+          }
+        });
+        people[index].name = newName;
+      } else {
+        const r = parseFloat(val);
+        if (r <= 0 || isNaN(r)) { alert('比例必须大于0'); return renderPeople(); }
+        people[index].ratio = r;
+      }
+      renderPeople();
+      renderItems();
+    }
+
+    function removePerson(index) {
+      const name = people[index].name;
+      people.splice(index, 1);
+      items.forEach(item => {
+        if (item.splits[name]) delete item.splits[name];
+        if (item.customWeights && item.customWeights[name]) delete item.customWeights[name];
+        if (item.payer === name) item.payer = '';
+      });
+      resetCustomState();
+      renderPeople();
+      renderItems();
+    }
+
+    // ================= 2. 账单管理 =================
+    function resetCustomState() {
+      tempCustomSplits = null;
+      tempCustomWeights = null;
+      els.customBtn.classList.remove('active');
+    }
+
+    function getDefaultSplits(amount) {
+      const totalW = people.reduce((acc, p) => acc + p.ratio, 0);
+      const splits = {};
+      if (totalW === 0) return splits;
+
+      let allocated = 0;
+      people.forEach(p => {
+        const val = parseFloat((amount * (p.ratio / totalW)).toFixed(2));
+        splits[p.name] = val;
+        allocated += val;
+      });
+      const diff = parseFloat((amount - allocated).toFixed(2));
+      if (diff !== 0 && people.length > 0) {
+        splits[people[0].name] = parseFloat((splits[people[0].name] + diff).toFixed(2));
+      }
+      return splits;
+    }
+
+    function submitItem() {
+      const desc = els.inputs.desc.value.trim();
+      const amount = parseFloat(els.inputs.amount.value);
+      const payer = els.inputs.payer.value;
+
+      if (people.length === 0) return alert('请先添加人员');
+      if (!desc || amount <= 0 || isNaN(amount) || !payer) return alert('请填写完整账单信息');
+
+      let finalSplits, finalWeights, isCustom;
+
+      if (tempCustomSplits && tempCustomWeights) {
+        const sum = Object.values(tempCustomSplits).reduce((a, b) => a + b, 0);
+        if (Math.abs(sum - amount) > 0.05) return alert('金额发生变化，请重新设置自定义分摊');
+        finalSplits = tempCustomSplits;
+        finalWeights = tempCustomWeights;
+        isCustom = true;
+      } else {
+        finalSplits = getDefaultSplits(amount);
+        finalWeights = null;
+        isCustom = false;
+      }
+
+      const newItem = {
+        id: isEditing ? editId : nextId++,
+        desc, amount, payer,
+        splits: finalSplits,
+        customWeights: finalWeights,
+        isCustom
+      };
+
+      if (isEditing) {
+        const idx = items.findIndex(i => i.id === editId);
+        if (idx > -1) items[idx] = newItem;
+        cancelEdit();
+      } else {
+        items.push(newItem);
+        els.inputs.desc.value = '';
+        els.inputs.amount.value = '';
+        els.inputs.payer.value = '';
+        resetCustomState();
+      }
+      renderItems();
+    }
+
+    function renderItems() {
+      els.billList.innerHTML = '';
+      items.forEach(item => {
+        if (isEditing && item.id === editId) return;
+        const div = document.createElement('div');
+        div.className = 'list-item';
+        const detailStr = Object.entries(item.splits).map(([n, v]) => `${n}:¥${v.toFixed(2)}`).join(' | ');
+        div.innerHTML = `
+                <div class="item-info" style="flex-direction: column; align-items: flex-start; gap: 2px;">
+                    <div><strong>${item.desc}</strong> - ¥${item.amount.toFixed(2)} <span style="font-size:0.85em; color:#666;">(付: ${item.payer})</span></div>
+                    <div style="font-size: 0.85em; color: #555;">${item.isCustom ? '<span style="color:var(--success-color)">[自定义]</span> ' : ''}${detailStr}</div>
+                </div>
+                <div style="display:flex; gap:5px;">
+                    <button class="btn-edit" onclick="editItem(${item.id})">编辑</button>
+                    <button class="btn-danger" onclick="deleteItem(${item.id})">删除</button>
+                </div>
+            `;
+        els.billList.appendChild(div);
+      });
+    }
+
+    function editItem(id) {
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+      isEditing = true;
+      editId = id;
+      els.inputs.desc.value = item.desc;
+      els.inputs.amount.value = item.amount;
+      els.inputs.payer.value = item.payer;
+      if (item.isCustom) {
+        tempCustomSplits = { ...item.splits };
+        tempCustomWeights = { ...item.customWeights };
+        els.customBtn.classList.add('active');
+      } else {
+        resetCustomState();
+      }
+      els.btns.submit.textContent = '保存修改';
+      els.btns.submit.style.backgroundColor = 'var(--success-color)';
+      els.btns.cancel.style.display = 'inline-block';
+      renderItems();
+      document.getElementById('bill-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelEdit() {
+      isEditing = false;
+      editId = null;
+      els.inputs.desc.value = '';
+      els.inputs.amount.value = '';
+      els.inputs.payer.value = '';
+      resetCustomState();
+      els.btns.submit.textContent = '添加条目';
+      els.btns.submit.style.backgroundColor = 'var(--primary-color)';
+      els.btns.cancel.style.display = 'none';
+      renderItems();
+    }
+
+    function deleteItem(id) {
+      if (isEditing && editId === id) cancelEdit();
+      items = items.filter(i => i.id !== id);
+      renderItems();
+    }
+
+    // ================= 3. 自定义分摊模态框 =================
+    function openModal() {
+      const amt = parseFloat(els.inputs.amount.value);
+      if (people.length === 0) return alert('请先添加人员');
+      if (amt <= 0 || isNaN(amt)) return alert('请先输入有效的金额');
+
+      els.modal.style.display = 'block';
+      document.getElementById('modal-amount').textContent = '¥' + amt.toFixed(2);
+      els.modalList.innerHTML = '';
+
+      const initWeights = tempCustomWeights || {};
+      const hasCustom = !!tempCustomWeights;
+
+      people.forEach(p => {
+        const isChecked = hasCustom ? initWeights.hasOwnProperty(p.name) : true;
+        const val = (hasCustom && initWeights[p.name]) ? initWeights[p.name] : p.ratio;
+        const div = document.createElement('div');
+        div.className = 'split-row';
+        div.innerHTML = `
+                <label class="split-check">
+                    <input type="checkbox" class="modal-check" value="${p.name}" ${isChecked ? 'checked' : ''} onchange="toggleRow(this)">
+                    <span>${p.name} <small style="color:#999">(全局:${p.ratio})</small></span>
+                </label>
+                <div class="split-val">
+                    <span>比例:</span>
+                    <input type="number" id="mw-${p.name}" value="${val}" min="0.1" step="0.1" ${isChecked ? '' : 'disabled'}>
+                </div>
+            `;
+        els.modalList.appendChild(div);
+      });
+    }
+
+    function toggleRow(checkbox) {
+      document.getElementById(`mw-${checkbox.value}`).disabled = !checkbox.checked;
+    }
+
+    function closeModal() { els.modal.style.display = 'none'; }
+
+    function saveModal() {
+      const amt = parseFloat(els.inputs.amount.value);
+      const checks = document.querySelectorAll('.modal-check:checked');
+      if (checks.length === 0) return alert('至少选择一个人参与分摊');
+
+      const newWeights = {};
+      let totalW = 0;
+      for (let chk of checks) {
+        const name = chk.value;
+        const w = parseFloat(document.getElementById(`mw-${name}`).value);
+        if (w <= 0 || isNaN(w)) return alert(`人员 ${name} 的比例必须大于0`);
+        newWeights[name] = w;
+        totalW += w;
+      }
+
+      const newSplits = {};
+      let allocated = 0;
+      const names = Object.keys(newWeights);
+      names.forEach(name => {
+        const val = parseFloat((amt * (newWeights[name] / totalW)).toFixed(2));
+        newSplits[name] = val;
+        allocated += val;
+      });
+
+      const diff = parseFloat((amt - allocated).toFixed(2));
+      if (diff !== 0) newSplits[names[0]] = parseFloat((newSplits[names[0]] + diff).toFixed(2));
+
+      tempCustomWeights = newWeights;
+      tempCustomSplits = newSplits;
+      els.customBtn.classList.add('active');
+      closeModal();
+    }
+
+    window.onclick = e => { if (e.target == els.modal) closeModal(); };
+
+    // ================= 4. 核心计算 =================
+    function calculate() {
+      if (people.length === 0 || items.length === 0) return alert('请先添加人员和账单');
+
+      const balances = {};
+      let totalBillAmount = 0;
+      const totalPersonPayments = {}; // <-- 追踪每个人垫付的总金额
+
+      people.forEach(p => {
+        balances[p.name] = 0;
+        totalPersonPayments[p.name] = 0;
+      });
+
+      items.forEach(item => {
+        totalBillAmount += item.amount;
+
+        // 记录付款金额 (个人总支出 - 已付)
+        if (totalPersonPayments[item.payer] !== undefined) {
+          totalPersonPayments[item.payer] += item.amount;
+        }
+
+        // 计算净余额
+        balances[item.payer] += item.amount; // 付款人 +
+
+        Object.entries(item.splits).forEach(([name, val]) => {
+          if (balances[name] !== undefined) {
+            balances[name] -= val; // 消费者 -
+          }
+        });
+      });
+
+      // 1. 渲染统计信息 (不醒目)
+      els.resultStats.style.display = 'block';
+      let statsHtml = `<div><strong>账单总金额:</strong> ¥${totalBillAmount.toFixed(2)}</div>`;
+
+      // --- 个人总支出 (已付金额) ---
+      statsHtml += `<div><strong>个人总支出(已付金额):</strong> `;
+      const paymentDetails = Object.entries(totalPersonPayments)
+        .map(([name, val]) => `${name}: ¥${val.toFixed(2)}`)
+        .join('， ');
+      statsHtml += paymentDetails + `</div>`;
+      els.resultStats.innerHTML = statsHtml;
+
+      // 2. 渲染余额
+      els.resultBal.style.display = 'block';
+      els.resultBal.innerHTML = '<h4>个人收支结余 (净值)</h4>';
+      const sorted = Object.entries(balances).sort((a, b) => a[1] - b[1]);
+
+      sorted.forEach(([name, val]) => {
+        const num = parseFloat(val.toFixed(2));
+        if (Math.abs(num) < 0.01) return;
+        const cls = num > 0 ? 'amount-pos' : 'amount-neg';
+        const txt = num > 0 ? `应收 ¥${num}` : `应付 ¥${Math.abs(num)}`;
+        els.resultBal.innerHTML += `<div><strong>${name}</strong>: <span class="${cls}">${txt}</span></div>`;
+      });
+
+      // 3. 计算转账
+      els.resultTrans.style.display = 'block';
+      els.resultTrans.innerHTML = '<h4>最优转账建议</h4>';
+
+      let debtors = sorted.filter(x => x[1] < -0.01).map(x => ({ name: x[0], val: x[1] }));
+      let creditors = sorted.filter(x => x[1] > 0.01).map(x => ({ name: x[0], val: x[1] }));
+
+      debtors.sort((a, b) => a.val - b.val);
+      creditors.sort((a, b) => b.val - a.val);
+
+      let count = 0;
+      let i = 0, j = 0;
+      while (i < debtors.length && j < creditors.length) {
+        const d = debtors[i];
+        const c = creditors[j];
+        const amount = Math.min(Math.abs(d.val), c.val);
+
+        els.resultTrans.innerHTML += `<div>👉 <strong>${d.name}</strong> 转给 <strong>${c.name}</strong> <span style="font-weight:bold">¥${amount.toFixed(2)}</span></div>`;
+
+        d.val += amount;
+        c.val -= amount;
+        if (Math.abs(d.val) < 0.01) i++;
+        if (c.val < 0.01) j++;
+        count++;
+      }
+      if (count === 0) els.resultTrans.innerHTML += '<div>账目已平，无需转账。</div>';
+    }
+
+    // 初始化示例
+    (function init() {
+      people.push({ name: 'A', ratio: 1 }, { name: 'B', ratio: 1 }, { name: 'C', ratio: 2 });
+      renderPeople();
+    })();
+  </script>
+</body>
+
+</html>
