@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GUOSTZ</title>
+  <style>
+    :root {
+      /* --bili: 0;
+      --height: calc(100% / (1 + var(--bili)));
+      --clip: calc(var(--bili) * 100%);
+      --bottomHeight: calc(50% - var(--height) * (1 - var(--bili)) / 2);
+      --bottomClip: calc(100% - var(--clip)); */
+      --primary-color: #ffffff;
+      --up-bg-color: #32363a;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      /**
+        华文楷体：STKaiti
+        华文仿宋：STFangsong
+        標楷體：BiauKai
+      */
+      font-family: 'STKaiti', sans-serif;
+    }
+  </style>
+
+  <!-- 玻璃效果 -->
+  <style>
+    .common-glass {
+      width: 200px;
+      height: 200px;
+      border-radius: 20px;
+      color: #fff;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.2);
+      background: linear-gradient(to right bottom,
+          rgba(255, 255, 255, 0.6),
+          rgba(255, 255, 255, 0.4),
+          rgba(255, 255, 255, 0.2),
+        );
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      border-left: 1px solid rgba(255, 255, 255, 0.6);
+    }
+  </style>
+
+  <style>
+    @keyframes line-rotate-up {
+      0% {
+        height: 100%;
+        clip-path: polygon(0 0, 100% 0, 100% 0, 0 100%);
+      }
+
+      100% {
+        height: 50%;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+    }
+
+    @keyframes line-rotate-down {
+      0% {
+        top: 0;
+        height: 100%;
+        clip-path: polygon(0 100%, 100% 0, 100% 100%, 0 100%);
+      }
+
+      100% {
+        top: 50%;
+        height: 50%;
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+      }
+    }
+
+    @keyframes bg-up-leave {
+      0% {
+        top: 0;
+        height: 50%;
+      }
+
+      100% {
+        top: 0;
+        height: 0;
+        display: none;
+      }
+    }
+
+    @keyframes bg-down-leave {
+      0% {
+        top: 50%;
+        height: 50%;
+      }
+
+      100% {
+        top: 100%;
+        height: 0;
+        display: none;
+      }
+    }
+
+    @keyframes showup {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes text-leave {
+      100% {
+        filter: blur(15px) contrast(200%);
+        transform: translate(100px, -80px) scale(1.2);
+        opacity: 0;
+        display: none;
+      }
+    }
+
+    .first-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      /* min-height: 150px; */
+    }
+
+    .first-container .bg {
+      position: absolute;
+      width: 100%;
+    }
+
+    .first-container .bg.up {
+      top: 0;
+      left: 0;
+      background-color: var(--up-bg-color);
+      animation: line-rotate-up 3s forwards;
+    }
+
+    .first-container .bg.down {
+      left: 0;
+      background-color: #ececec;
+      animation: line-rotate-down 3s forwards;
+    }
+
+
+
+    .first-container .bg.up.bg-up-leave {
+      animation: bg-up-leave 1s forwards;
+    }
+
+    .first-container .bg.down.bg-down-leave {
+      animation: bg-down-leave 1s forwards;
+    }
+
+    .text-wrap {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      transform: translateY(-50%);
+      mix-blend-mode: difference;
+      animation: showup 3s forwards;
+    }
+
+    .text-leave {
+      filter: url('#filter');
+      cursor: pointer;
+    }
+
+    .text-leave #text {
+      animation: text-leave 3s ease-out forwards;
+    }
+
+    #text {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      text-align: center;
+      font-size: 70px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: bold;
+      text-shadow:
+        0 0 10px rgba(255, 255, 255, 0.3),
+        0 0 20px rgba(255, 255, 255, 0.3),
+        2px 2px 2px rgba(0, 0, 0, 0.1);
+      -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+      cursor: pointer;
+    }
+
+    #text>span {
+      display: block;
+    }
+  </style>
+
+  <style>
+    @keyframes rain {
+      0% {
+        transform: translateX(0);
+      }
+
+      70% {
+        transform: translateY(190px);
+      }
+
+      100% {
+        transform: translateY(190px);
+      }
+    }
+
+    @keyframes author-show {
+      0% {
+        filter: blur(10px);
+      }
+
+      100% {
+        filter: blur(0px);
+        letter-spacing: 0px;
+      }
+    }
+
+    .second-container {
+      display: none;
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+
+    .second-container-layout {
+      padding: 16px;
+    }
+
+    .info-wrap {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 60px;
+      filter: contrast(30);
+      background: #000;
+      color: #fff;
+    }
+
+    .info-wrap .author {
+      font-size: 30px;
+      letter-spacing: -20px;
+      animation: author-show 2s linear forwards;
+    }
+
+    .info-wrap .info {
+      display: flex;
+    }
+
+    .info-wrap .info>div {
+      outline: 1px solid lightskyblue;
+      cursor: pointer;
+    }
+
+    .second-container-layout .second-container-content {
+      padding-top: 16px;
+      display: flex;
+      gap: 16px;
+    }
+
+    .network-wrap {
+      width: 300px;
+      height: 330px;
+      padding: 8px 16px 0;
+    }
+
+    .cloud-wrap {
+      width: auto;
+      height: 330px;
+      padding: 8px 16px 0;
+      -webkit-box-reflect: below 1px linear-gradient(transparent, transparent, transparent, transparent, #0005);
+    }
+
+    .cloud-wrap .cloud {
+      position: relative;
+      top: 70px;
+      z-index: 100;
+
+      /* 横向云朵 */
+      width: 250px;
+      height: 60px;
+      background-color: var(--primary-color);
+      border-radius: 100px;
+
+      filter: drop-shadow(0 0 30px var(--primary-color));
+    }
+
+    .cloud-wrap .cloud::before {
+      content: "";
+      width: 70px;
+      height: 70px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      position: absolute;
+      top: -40px;
+      left: 40px;
+
+      box-shadow: 65px 0 0 28px var(--primary-color);
+    }
+
+    .cloud-wrap .cloud .cloud-text {
+      position: absolute;
+      top: 50px;
+      height: 20px;
+      line-height: 20px;
+
+      text-transform: uppercase;
+      color: var(--primary-color);
+      text-shadow: 0 0 5px var(--primary-color), 0 0 15px var(--primary-color), 0 0 30px var(--primary-color);
+      transform-origin: bottom;
+      animation: rain 2s linear forwards;
+    }
+
+    .router-wrap {
+      width: 300px;
+      height: 330px;
+      padding: 8px 16px 0;
+    }
+
+    .router-wrap .router>a {
+      color: #fff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="first-container">
+    <div class="bg up"></div>
+    <div class="bg down"></div>
+    <div class="text-wrap">
+      <div id="text"></div>
+    </div>
+
+    <svg width="0">
+      <filter id="filter">
+        <feTurbulence id="turbulence" type="fractalNoise" baseFrequency=".03" numOctaves="20" />
+        <feDisplacementMap in="SourceGraphic" scale="30" />
+      </filter>
+    </svg>
+  </div>
+
+  <div class="second-container">
+    <div class="second-container-layout">
+      <div class="info-wrap">
+        <div class="author">GUOSTZ</div>
+        <div class="info">
+          <div class="battery">电池</div>
+          <div class="network">网络</div>
+          <div class="address">地址</div>
+        </div>
+      </div>
+
+      <div class="second-container-content">
+        <div class="network-wrap common-glass">
+          <div class="network">
+            <div>
+              <span>网络状态：</span>
+              <span id="network-status"></span>
+            </div>
+            <div>
+              <span>有效类型：</span>
+              <span id="network-effectiveType"></span>
+            </div>
+            <div>
+              <span>下行速度：</span>
+              <span id="network-downlink"></span>
+            </div>
+          </div>
+        </div>
+        <div class="cloud-wrap common-glass">
+          <div class="cloud"></div>
+        </div>
+        <div class="router-wrap common-glass">
+          <div class="router">
+            <a href="./g-components">组件库</a>
+          </div>
+          <div class="router">
+            <a href="./g-app">微前端示例</a>
+          </div>
+          <div class="router">
+            <a href="./g-bill">账单分摊</a>
+          </div>
+          <div class="router">
+            <a href="./g-bill2">账单分摊2</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="./js/jinrishici.min.js" charset="UTF-8"></script>
+  <script>
+    function removePunctuationAndSplit(text) {
+      const punctuationRegex = /[，。！？；：、“”‘’、\s\n\r\t\u3000\uff0c\uff0e\uff1f\uff01\uff1b\uff1a\u201c\u201d\u2018\u2019\uff08\uff09\u3001\u3002\u3010\u3011\uff5e\uff5c\u2027\u3002\uff61\uff62\u301c\u301d\u301e\u301f\uff01\uff1f\u203c\u2047\u2048\u2049\u300a\u300b\u3008\u3009\u300c\u300d\u300e\u300f\u3014\u3015\u2025\u2026\u2032\u2033\u2034\u2035\u2036\u2037\uff5e\u2018\u2019\u201c\u201d\u2014\u2013\uff0d\u2022\u201a\u201e\u2030\u2031\uff0e\uff5c\u2024\u202f\uff0c\uff01\u3001\uff1b\uff1a\u2026\u2025\u2022\u2027\u2574\u2575\u25cb\u25cf\u25b6\u25c0\u25d7\u25d8\u2660\u2663\u2665\u2666\u2713\u2717\u2720\u2721\u2736\u2737\u274c\u274e\u2757\u2776\u2777\u2795\u2796\u2797\u27b0\u27bf\uffe5\uff04\u3012\u301d\u301e\uff5e\uffe3]/g;
+      const cleanedText = text.replace(punctuationRegex, '');
+      const charArray = cleanedText.split('');
+      return charArray;
+    }  
+  </script>
+  <script>
+    function rain(texts) {
+      if (!Array.isArray(texts)) {
+        return;
+      }
+
+      const cloudEle = document.querySelector(".cloud");
+      const textEle = document.createElement("div");
+      const text = texts[Math.floor(Math.random() * texts.length)];
+
+      textEle.innerText = text;
+      textEle.classList.add("cloud-text");
+
+      const left = Math.floor(Math.random() * 240);
+      const size = Math.random() * 1.5;
+      const duration = Math.random();
+      const styleSheets = {
+        left: `${left}px`,
+        fontSize: `${0.5 + size}em`,
+        animationDuration: `${1 + duration}s`,
+      };
+      Object.assign(textEle.style, styleSheets);
+
+      cloudEle.appendChild(textEle);
+      setTimeout(() => {
+        cloudEle.removeChild(textEle);
+      }, 10000);
+
+      return () => rain(texts);
+    }
+
+    let texts = [];
+    const firstContainer = document.querySelector('.first-container');
+    const secondContainer = document.querySelector('.second-container');
+    const textWrapDom = document.querySelector('.text-wrap');
+    const textDom = document.getElementById('text');
+
+    function getText() {
+      jinrishici.load(function (result) {
+        const fragment = document.createDocumentFragment();
+        const content = result.data.content || '';
+
+        for (let i = 0; i < content.length; i++) {
+          const span = document.createElement('span');
+          span.innerText = content[i];
+          span.style.animationDelay = `1+${i / 10}s`
+          fragment.appendChild(span);
+        }
+        textDom.innerHTML = '';
+        textDom.appendChild(fragment);
+
+        texts = removePunctuationAndSplit(result.data.origin.content.join(''))
+      });
+
+      return getText;
+    }
+
+    setInterval(getText(), 30000);
+
+    let rainTimer;
+    textWrapDom.addEventListener('click', e => {
+      const bgUpDom = document.querySelector('.bg.up');
+      const bgDownDom = document.querySelector('.bg.down');
+
+      bgUpDom.classList.add('bg-up-leave');
+      bgDownDom.classList.add('bg-down-leave');
+      textWrapDom.classList.add('text-leave');
+      firstContainer.style = `overflow: hidden;`
+      document.body.style.background = '#000';
+
+      // 动画结束后，删除first-container节点
+      setTimeout(() => {
+        firstContainer.remove();
+        secondContainer.style.display = 'block';
+        if (rainTimer) {
+          clearInterval(rainTimer);
+        }
+        rainTimer = setInterval(rain(texts), 500)
+      }, 3000);
+    })
+  </script>
+  <script>
+    // 网络信息处理
+    const networkStatus = document.querySelector('#network-status');
+    const networkEffectiveType = document.querySelector('#network-effectiveType');
+    const networkDownlink = document.querySelector('#network-downlink');
+    networkStatus.innerHTML = navigator.onLine ? '在线' : '离线';
+    networkEffectiveType.innerHTML = navigator.connection.effectiveType;
+    networkDownlink.innerHTML = navigator.connection.downlink;
+    navigator.connection.addEventListener('change', (e) => {
+      networkEffectiveType.innerHTML = e.target.effectiveType;
+      networkDownlink.innerHTML = e.target.downlink;
+    })
+    console.log(navigator)
+    // 监听网络状态变化
+    window.addEventListener('online', function () {
+      networkStatus.innerHTML = '在线';
+    });
+
+    window.addEventListener('offline', function () {
+      networkStatus.innerHTML = '离线';
+    });
+
+    // 地理信息处理
+    if (navigator.geolocation) {
+      // navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+    } else {
+      console.log("您的浏览器不支持地理定位");
+    }
+
+    function successCallback(position) {
+      console.log("获取地理信息成功");
+      var wd = position.coords.latitude;
+      var jd = position.coords.longitude;
+      console.log("纬度：" + wd + "    经度：" + jd);
+    }
+
+    function errorCallback(error) {
+      console.log("获取地理信息失败");
+      console.log(error);
+    }
+
+    // 屏幕信息
+    for (s in screen) {
+      console.log(s + ":" + screen[s])
+    }
+
+    // 电池信息
+    navigator.getBattery().then(function (battery) {
+      console.log("是否在充电:" + battery.charging);
+      console.log("电量比例:" + battery.level);
+      console.log("剩多长时间充满电" + battery.chargingTime);
+      console.log("剩多长时间用完电" + battery.dischargingTime);
+
+      /* 事件 */
+      battery.onchargingchange        // 充电状态放生变化
+      battery.onlevelchange           // 电量发生变化
+      battery.onchargingtimechange    // 充电时长发生变化
+      battery.ondischargingtimechange // 放电时长发生变化
+    });
+
+
+    // 显卡信息/处理器信息
+    (function () {
+      var canvas = document.createElement('canvas'),
+        gl = canvas.getContext('experimental-webgl'),
+        debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+
+      console.log(gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL));   // 显卡供应商
+      console.log(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)); // 显卡渲染器
+    })();
+  </script>
+</body>
+
+</html>

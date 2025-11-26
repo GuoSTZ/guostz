@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    @property --x {
+      syntax: '<integer>';
+      inherits: true;
+      initial-value: 100;
+    }
+
+    @property --y {
+      syntax: '<number>';
+      inherits: true;
+      initial-value: 1;
+    }
+
+    progress {
+      width: 150px;
+      height: 150px;
+      appearance: none;
+      position: relative;
+      animation: y 2s .5s both;
+      timeline-scope: --progress;
+    }
+
+    progress::-webkit-progress-bar {
+      overflow: auto;
+      visibility: hidden;
+    }
+
+    progress::-webkit-progress-value {
+      view-timeline: --progress inline;
+    }
+
+    progress::before,
+    progress::after {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      animation: x linear;
+      animation-timeline: --progress;
+      animation-range: entry 100% exit 100%;
+    }
+
+    progress::before {
+      content: counter(val) "%";
+      counter-reset: val calc(var(--y)*var(--x));
+      display: grid;
+      place-content: center;
+      font-family: system-ui, sans-serif;
+      font-weight: 900;
+      font-size: 1.8rem;
+    }
+
+    progress::after {
+      content: "";
+      background: color-mix(in hsl, #E80E0D, #7AB317 calc(1%*var(--x)));
+      padding: round(15%, 1px);
+      border-radius: 50%;
+      mask:
+        conic-gradient(#0000 0 0) subtract content-box,
+        conic-gradient(#000 calc(1%*var(--y)*var(--x)), #0000 0);
+    }
+
+    @keyframes x {
+      to {
+        --x: 0
+      }
+    }
+
+    @keyframes y {
+      0% {
+        --y: 0
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <progress max="100" value="20"></progress>
+    <progress max="100" value="20"></progress>
+    <progress max="100" value="20"></progress>
+    <progress max="100" value="20"></progress>
+    <progress max="100" value="20"></progress>
+  </div>
+</body>
+
+</html>

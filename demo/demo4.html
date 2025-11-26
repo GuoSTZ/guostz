@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body {
+      background: #000;
+    }
+
+    .container {
+      margin-top: 50px;
+      text-align: center;
+      background-color: #000;
+      filter: contrast(30);
+    }
+
+    .text {
+      font-size: 100px;
+      letter-spacing: 10px;
+      color: #fff;
+      animation: showup 5s linear forwards;
+    }
+
+    @keyframes showup {
+      0% {
+        filter: blur(2px);
+      }
+
+      100% {
+        letter-spacing: -50px;
+        filter: blur(10px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <span class="text">Duyi Education</span>
+  </div>
+</body>
+
+
+</html>

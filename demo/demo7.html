@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>图片上传与拼图</title>
+  <style>
+    #preview {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    #preview img {
+      max-width: 30%;
+      margin: 1%;
+    }
+
+    #canvasContainer {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #canvasContainer canvas {
+      border: 1px solid black;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>图片上传与拼图</h1>
+  <input type="file" id="fileInput" accept="image/*" multiple>
+  <div id="preview"></div>
+  <div id="canvasContainer">
+    <canvas id="canvas"></canvas>
+  </div>
+  <button id="downloadBtn">下载拼图</button>
+
+  <!-- <script>
+    document.getElementById('fileInput').addEventListener('change', handleFiles, false);
+
+    const MAX_SIZE_MB = 20; // 最大图片大小，单位MB
+    const MAX_IMAGES = 3; // 最大图片数量
+    let images = [];
+
+    function handleFiles(event) {
+      const files = Array.from(event.target.files);
+      if (files.length + images.length > MAX_IMAGES) {
+        alert(`最多只能上传 ${MAX_IMAGES} 张图片！`);
+        return;
+      }
+
+      files.forEach(file => {
+        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+          alert(`图片大小不能超过 ${MAX_SIZE_MB} MB！`);
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = new Image();
+          img.onload = function () {
+            images.push(img);
+            updatePreview();
+          }
+          img.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function updatePreview() {
+      const preview = document.getElementById('preview');
+      preview.innerHTML = '';
+      images.forEach(img => {
+        const imgElement = document.createElement('img');
+        imgElement.src = img.src;
+        preview.appendChild(imgElement);
+      });
+      createCollage();
+    }
+
+    function createCollage() {
+      if (images.length === 0) return;
+
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // 假设每张图片都是正方形，并且画布也是正方形
+      const imgWidth = 10900; // 每张图片的宽度（可以根据需要调整）
+      const imgHeight = 5000; // 每张图片的高度（可以根据需要调整）
+      const canvasWidth = imgWidth * Math.ceil(Math.sqrt(images.length)); // 画布宽度
+      const canvasHeight = imgHeight * Math.ceil(Math.sqrt(images.length)); // 画布高度
+
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+
+      let row = 0;
+      let col = 0;
+
+      images.forEach(img => {
+        ctx.drawImage(img, col * imgWidth, row * imgHeight, imgWidth, imgHeight);
+        col++;
+        if (col >= Math.ceil(Math.sqrt(images.length))) {
+          col = 0;
+          row++;
+        }
+      });
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('canvas');
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png'); // 使用PNG格式无损保存
+      link.download = 'collage.png';
+      link.click();
+    });
+  </script> -->
+
+  <script>
+    document.getElementById('fileInput').addEventListener('change', handleFiles, false);
+
+    const MAX_SIZE_MB = 20; // 最大图片大小，单位MB
+    const MAX_IMAGES = 3; // 最大图片数量
+    let images = [];
+    let originalSizes = []; // 用于存储每张图片的原始尺寸
+
+    function handleFiles(event) {
+      const files = Array.from(event.target.files);
+      if (files.length + images.length > MAX_IMAGES) {
+        alert(`最多只能上传 ${MAX_IMAGES} 张图片！`);
+        return;
+      }
+
+      files.forEach(file => {
+        if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+          alert(`图片大小不能超过 ${MAX_SIZE_MB} MB！`);
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const img = new Image();
+          img.onload = function () {
+            // 存储原始尺寸
+            originalSizes.push({ width: img.width, height: img.height });
+            // 缩小一倍后的尺寸
+            const scaledWidth = img.width / 2;
+            const scaledHeight = img.height / 2;
+            // 创建一个canvas来临时绘制缩小后的图片，并转换为data URL
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = scaledWidth;
+            tempCanvas.height = scaledHeight;
+            tempCtx.drawImage(img, 0, 0, scaledWidth, scaledHeight);
+            // 使用toDataURL来获取缩小后的图片数据
+            const scaledImgSrc = tempCanvas.toDataURL('image/png');
+            // 创建一个新的Image对象来使用这个缩小后的图片数据
+            const scaledImg = new Image();
+            scaledImg.src = scaledImgSrc;
+            scaledImg.onload = function () {
+              images.push(scaledImg);
+              updatePreview();
+            }
+          }
+          img.src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function updatePreview() {
+      const preview = document.getElementById('preview');
+      preview.innerHTML = '';
+      images.forEach(img => {
+        const imgElement = document.createElement('img');
+        imgElement.src = img.src;
+        preview.appendChild(imgElement);
+      });
+      createCollage();
+    }
+
+    function createCollage() {
+      if (images.length === 0) return;
+
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // 计算画布尺寸
+      let maxRows = Math.ceil(Math.sqrt(images.length));
+      let rowHeights = [];
+      let scaledHeight = 0;
+      const scaledWidth = document.body.clientWidth * 0.8;
+
+      images.forEach((img, index) => {
+        const originalSize = originalSizes[index];
+        const aspectRatio = originalSize.width / originalSize.height;
+        scaledHeight = Math.max(scaledHeight, scaledWidth / aspectRatio);
+
+        if (!rowHeights[Math.floor(index / maxRows)]) {
+          rowHeights[Math.floor(index / maxRows)] = 0;
+        }
+
+        rowHeights[Math.floor(index / maxRows)] += scaledHeight;
+      });
+
+      const canvasHeight = Math.max(...rowHeights) * (maxRows > 1 ? 1.1 : 1); // 稍微增加一点间距，如果只有一行则不加
+      const canvasWidth = scaledWidth * (images.length > maxRows ? Math.ceil(images.length / maxRows) : 1);
+
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+
+      let currentY = 0;
+      let row = 0;
+
+      images.forEach((img, index) => {
+        const originalSize = originalSizes[index];
+        const aspectRatio = originalSize.width / originalSize.height;
+        const scaledHeight = scaledWidth / aspectRatio;
+
+        const x = (index % Math.ceil(images.length / maxRows)) * scaledWidth;
+
+        if (row === 0 || currentY + scaledHeight > rowHeights[row - 1] * 1.1) {
+          currentY = 0;
+          row++;
+        }
+
+        ctx.drawImage(img, x, currentY, scaledWidth, scaledHeight);
+        currentY += scaledHeight;
+      });
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      const canvas = document.getElementById('canvas');
+      const link = document.createElement('a');
+      link.href = canvas.toDataURL('image/png'); // 使用PNG格式无损保存
+      link.download = 'collage.png';
+      link.click();
+    });
+  </script>
+</body>
+
+</html>

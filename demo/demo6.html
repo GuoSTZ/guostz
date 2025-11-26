@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Gear</title>
+  <style>
+    .gear {
+      position: relative;
+      width: 100px;
+      height: 100px;
+      background: #000;
+      border-radius: 50%;
+      margin: 50px auto;
+      animation: rotate 5s linear infinite;
+    }
+
+    /* .gear:before,
+    .gear:after {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 80px;
+      background: #000;
+      border-radius: 20px 20px 0 0;
+      top: 10px;
+    } */
+
+    .gear:before {
+      left: -20px;
+      transform: rotate(30deg);
+    }
+
+    .gear:after {
+      right: -20px;
+      transform: rotate(-30deg);
+    }
+
+    .gear .tooth {
+      position: absolute;
+      width: 10px;
+      height: 20px;
+      background: #000;
+      top: 40px;
+      left: 50%;
+      transform-origin: 50% 100%;
+      border-radius: 0 0 10px 10px;
+    }
+
+    .gear .tooth:nth-child(1) {
+      transform: rotate(0deg) translateX(-50%);
+    }
+
+    .gear .tooth:nth-child(2) {
+      transform: rotate(60deg) translateX(-50%);
+    }
+
+    .gear .tooth:nth-child(3) {
+      transform: rotate(120deg) translateX(-50%);
+    }
+
+    .gear .tooth:nth-child(4) {
+      transform: rotate(180deg) translateX(-50%);
+    }
+
+    .gear .tooth:nth-child(5) {
+      transform: rotate(240deg) translateX(-50%);
+    }
+
+    .gear .tooth:nth-child(6) {
+      transform: rotate(300deg) translateX(-50%);
+    }
+
+    @keyframes rotate {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="gear">
+    <div class="tooth"></div>
+    <div class="tooth"></div>
+    <div class="tooth"></div>
+    <div class="tooth"></div>
+    <div class="tooth"></div>
+    <div class="tooth"></div>
+  </div>
+</body>
+
+</html>

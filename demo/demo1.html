@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    .container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 50px auto;
+    }
+
+    canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <canvas id="myCanvas" width="300" height="300"></canvas>
+  </div>
+  <script>
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const width = canvas.width;
+    const height = canvas.height;
+    ctx.fillStyle = '#32363a';
+    ctx.fillRect(0, 0, width, height);
+
+    let angle = 0;
+
+    // 计算线段与矩形边界的交点
+    function findIntersection(angle) {
+      const tan = Math.tan(angle);
+      let x, y;
+
+      // 右边界
+      if (angle >= -Math.PI / 2 && angle <= Math.PI / 2) {
+        x = width;
+        y = centerY + (x - centerX) * tan;
+        if (y >= 0 && y <= height) {
+          return { x, y };
+        }
+      }
+
+      // 左边界
+      if (angle >= Math.PI / 2 || angle <= -Math.PI / 2) {
+        x = 0;
+        y = centerY + (x - centerX) * tan;
+        if (y >= 0 && y <= height) {
+          return { x, y };
+        }
+      }
+
+      // 下边界
+      if (angle >= 0 && angle <= Math.PI) {
+        y = height;
+        x = centerX + (y - centerY) / tan;
+        if (x >= 0 && x <= width) {
+          return { x, y };
+        }
+      }
+
+      // 上边界
+      if (angle >= Math.PI || angle <= 0) {
+        y = 0;
+        x = centerX + (y - centerY) / tan;
+        if (x >= 0 && x <= width) {
+          return { x, y };
+        }
+      }
+
+      return { x: centerX, y: centerY };
+    }
+
+    function draw() {
+      // 清除画布
+      // ctx.clearRect(0, 0, width, height);
+
+      // 计算交点
+      const intersection = findIntersection(angle);
+
+      // 绘制旋转的线
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(intersection.x, intersection.y);
+      ctx.strokeStyle = 'transport';
+      ctx.stroke();
+
+      // 绘制扇形区域
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(centerX, centerY, Math.max(width, height), 0, angle, angle < 0);
+      ctx.fillStyle = '#ececec';
+      ctx.fill();
+
+      // 更新角度
+      angle += Math.PI / 6; // 每次旋转30度
+      if (angle > Math.PI * 2) {
+        angle = angle - Math.PI * 2;
+      }
+    }
+
+    const INTERVAL = 1000; // 1秒间隔
+    setInterval(draw, INTERVAL);
+
+    draw();
+  </script>
+</body>
+
+</html>

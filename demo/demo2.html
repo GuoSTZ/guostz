@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Text Merge Effect</title>
+<style>
+  .text-merge {
+    font-size: 60px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    position: relative;
+  }
+ 
+  .text-merge::after {
+    content: attr(data-content);
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #333;
+    opacity: 0;
+    animation: merge-effect 5s infinite alternate;
+  }
+ 
+  @keyframes merge-effect {
+    0% {
+      text-shadow: 0 0 5px #333;
+      opacity: 0;
+    }
+    50% {
+      text-shadow: 0 0 20px #333;
+      opacity: 1;
+    }
+    100% {
+      text-shadow: 0 0 20px #333, 0 0 30px #333, 0 0 40px #333, 0 0 50px #333, 0 0 60px #333, 0 0 70px #333;
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+ 
+<div class="text-merge" data-content="水滴效果">水滴效果</div>
+ 
+</body>
+</html>
