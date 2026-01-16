@@ -19,10 +19,11 @@
 
     html,
     body {
-      margin: 0;
-      padding: 0;
       width: 100vw;
       height: 100vh;
+      margin: 0;
+      padding: 0;
+
       /**
         华文楷体：STKaiti
         华文仿宋：STFangsong
@@ -30,15 +31,17 @@
       */
       font-family: 'STKaiti', sans-serif;
     }
-  </style>
 
-  <!-- 玻璃效果 -->
-  <style>
+    /* 玻璃效果 */
     .common-glass {
       width: 200px;
       height: 200px;
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      border-left: 1px solid rgba(255, 255, 255, 0.6);
       border-radius: 20px;
+
       color: #fff;
+
       backdrop-filter: blur(10px);
       box-shadow: 0 0 30px 10px rgba(255, 255, 255, 0.2);
       background: linear-gradient(to right bottom,
@@ -46,12 +49,8 @@
           rgba(255, 255, 255, 0.4),
           rgba(255, 255, 255, 0.2),
         );
-      border-top: 1px solid rgba(255, 255, 255, 0.6);
-      border-left: 1px solid rgba(255, 255, 255, 0.6);
     }
-  </style>
 
-  <style>
     @keyframes line-rotate-up {
       0% {
         height: 100%;
@@ -85,9 +84,9 @@
       }
 
       100% {
+        display: none;
         top: 0;
         height: 0;
-        display: none;
       }
     }
 
@@ -98,9 +97,9 @@
       }
 
       100% {
+        display: none;
         top: 100%;
         height: 0;
-        display: none;
       }
     }
 
@@ -116,10 +115,11 @@
 
     @keyframes text-leave {
       100% {
-        filter: blur(15px) contrast(200%);
-        transform: translate(100px, -80px) scale(1.2);
-        opacity: 0;
         display: none;
+        transform: translate(100px, -80px) scale(1.2);
+
+        filter: blur(15px) contrast(200%);
+        opacity: 0;
       }
     }
 
@@ -138,17 +138,19 @@
     .first-container .bg.up {
       top: 0;
       left: 0;
+
       background-color: var(--up-bg-color);
+
       animation: line-rotate-up 3s forwards;
     }
 
     .first-container .bg.down {
       left: 0;
+
       background-color: #ececec;
+
       animation: line-rotate-down 3s forwards;
     }
-
-
 
     .first-container .bg.up.bg-up-leave {
       animation: bg-up-leave 1s forwards;
@@ -162,8 +164,11 @@
       position: absolute;
       top: 50%;
       width: 100%;
+
       transform: translateY(-50%);
+
       mix-blend-mode: difference;
+
       animation: showup 3s forwards;
     }
 
@@ -180,24 +185,25 @@
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
+
       text-align: center;
       font-size: 70px;
-      color: rgba(255, 255, 255, 0.8);
       font-weight: bold;
+      
+      color: rgba(255, 255, 255, 0.8);
       text-shadow:
         0 0 10px rgba(255, 255, 255, 0.3),
         0 0 20px rgba(255, 255, 255, 0.3),
         2px 2px 2px rgba(0, 0, 0, 0.1);
       -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+      
       cursor: pointer;
     }
 
     #text>span {
       display: block;
     }
-  </style>
 
-  <style>
     @keyframes rain {
       0% {
         transform: translateX(0);
@@ -218,8 +224,9 @@
       }
 
       100% {
-        filter: blur(0px);
         letter-spacing: 0px;
+
+        filter: blur(0px);
       }
     }
 
@@ -227,6 +234,7 @@
       display: none;
       width: 100%;
       height: 100%;
+
       background: #000;
     }
 
@@ -239,14 +247,17 @@
       justify-content: space-between;
       align-items: center;
       height: 60px;
-      filter: contrast(30);
-      background: #000;
+
       color: #fff;
+
+      background: #000;
+      filter: contrast(30);
     }
 
     .info-wrap .author {
       font-size: 30px;
       letter-spacing: -20px;
+
       animation: author-show 2s linear forwards;
     }
 
@@ -256,13 +267,14 @@
 
     .info-wrap .info>div {
       outline: 1px solid lightskyblue;
+
       cursor: pointer;
     }
 
     .second-container-layout .second-container-content {
-      padding-top: 16px;
       display: flex;
       gap: 16px;
+      padding-top: 16px;
     }
 
     .network-wrap {
@@ -275,6 +287,7 @@
       width: auto;
       height: 330px;
       padding: 8px 16px 0;
+
       -webkit-box-reflect: below 1px linear-gradient(transparent, transparent, transparent, transparent, #0005);
     }
 
@@ -282,26 +295,24 @@
       position: relative;
       top: 70px;
       z-index: 100;
-
-      /* 横向云朵 */
       width: 250px;
       height: 60px;
-      background-color: var(--primary-color);
       border-radius: 100px;
 
+      background-color: var(--primary-color);
       filter: drop-shadow(0 0 30px var(--primary-color));
     }
 
     .cloud-wrap .cloud::before {
-      content: "";
-      width: 70px;
-      height: 70px;
-      background-color: var(--primary-color);
-      border-radius: 50%;
       position: absolute;
       top: -40px;
       left: 40px;
+      content: "";
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
 
+      background-color: var(--primary-color);
       box-shadow: 65px 0 0 28px var(--primary-color);
     }
 
@@ -309,12 +320,14 @@
       position: absolute;
       top: 50px;
       height: 20px;
-      line-height: 20px;
 
+      line-height: 20px;
       text-transform: uppercase;
+      transform-origin: bottom;
+
       color: var(--primary-color);
       text-shadow: 0 0 5px var(--primary-color), 0 0 15px var(--primary-color), 0 0 30px var(--primary-color);
-      transform-origin: bottom;
+
       animation: rain 2s linear forwards;
     }
 
@@ -325,8 +338,9 @@
     }
 
     .router-wrap .router>a {
-      color: #fff;
       text-decoration: none;
+      
+      color: #fff;
     }
   </style>
 </head>
@@ -398,163 +412,258 @@
 
   <script src="./js/jinrishici.min.js" charset="UTF-8"></script>
   <script>
-    function removePunctuationAndSplit(text) {
-      const punctuationRegex = /[，。！？；：、“”‘’、\s\n\r\t\u3000\uff0c\uff0e\uff1f\uff01\uff1b\uff1a\u201c\u201d\u2018\u2019\uff08\uff09\u3001\u3002\u3010\u3011\uff5e\uff5c\u2027\u3002\uff61\uff62\u301c\u301d\u301e\u301f\uff01\uff1f\u203c\u2047\u2048\u2049\u300a\u300b\u3008\u3009\u300c\u300d\u300e\u300f\u3014\u3015\u2025\u2026\u2032\u2033\u2034\u2035\u2036\u2037\uff5e\u2018\u2019\u201c\u201d\u2014\u2013\uff0d\u2022\u201a\u201e\u2030\u2031\uff0e\uff5c\u2024\u202f\uff0c\uff01\u3001\uff1b\uff1a\u2026\u2025\u2022\u2027\u2574\u2575\u25cb\u25cf\u25b6\u25c0\u25d7\u25d8\u2660\u2663\u2665\u2666\u2713\u2717\u2720\u2721\u2736\u2737\u274c\u274e\u2757\u2776\u2777\u2795\u2796\u2797\u27b0\u27bf\uffe5\uff04\u3012\u301d\u301e\uff5e\uffe3]/g;
-      const cleanedText = text.replace(punctuationRegex, '');
-      const charArray = cleanedText.split('');
-      return charArray;
-    }  
-  </script>
-  <script>
-    function rain(texts) {
-      if (!Array.isArray(texts)) {
-        return;
-      }
-
-      const cloudEle = document.querySelector(".cloud");
-      const textEle = document.createElement("div");
-      const text = texts[Math.floor(Math.random() * texts.length)];
-
-      textEle.innerText = text;
-      textEle.classList.add("cloud-text");
-
-      const left = Math.floor(Math.random() * 240);
-      const size = Math.random() * 1.5;
-      const duration = Math.random();
-      const styleSheets = {
-        left: `${left}px`,
-        fontSize: `${0.5 + size}em`,
-        animationDuration: `${1 + duration}s`,
-      };
-      Object.assign(textEle.style, styleSheets);
-
-      cloudEle.appendChild(textEle);
-      setTimeout(() => {
-        cloudEle.removeChild(textEle);
-      }, 10000);
-
-      return () => rain(texts);
-    }
-
-    let texts = [];
-    const firstContainer = document.querySelector('.first-container');
-    const secondContainer = document.querySelector('.second-container');
-    const textWrapDom = document.querySelector('.text-wrap');
-    const textDom = document.getElementById('text');
-
-    function getText() {
-      jinrishici.load(function (result) {
-        const fragment = document.createDocumentFragment();
-        const content = result.data.content || '';
-
-        for (let i = 0; i < content.length; i++) {
-          const span = document.createElement('span');
-          span.innerText = content[i];
-          span.style.animationDelay = `1+${i / 10}s`
-          fragment.appendChild(span);
-        }
-        textDom.innerHTML = '';
-        textDom.appendChild(fragment);
-
-        texts = removePunctuationAndSplit(result.data.origin.content.join(''))
-      });
-
-      return getText;
-    }
-
-    setInterval(getText(), 30000);
-
-    let rainTimer;
-    textWrapDom.addEventListener('click', e => {
-      const bgUpDom = document.querySelector('.bg.up');
-      const bgDownDom = document.querySelector('.bg.down');
-
-      bgUpDom.classList.add('bg-up-leave');
-      bgDownDom.classList.add('bg-down-leave');
-      textWrapDom.classList.add('text-leave');
-      firstContainer.style = `overflow: hidden;`
-      document.body.style.background = '#000';
-
-      // 动画结束后，删除first-container节点
-      setTimeout(() => {
-        firstContainer.remove();
-        secondContainer.style.display = 'block';
-        if (rainTimer) {
-          clearInterval(rainTimer);
-        }
-        rainTimer = setInterval(rain(texts), 500)
-      }, 3000);
-    })
-  </script>
-  <script>
-    // 网络信息处理
-    const networkStatus = document.querySelector('#network-status');
-    const networkEffectiveType = document.querySelector('#network-effectiveType');
-    const networkDownlink = document.querySelector('#network-downlink');
-    networkStatus.innerHTML = navigator.onLine ? '在线' : '离线';
-    networkEffectiveType.innerHTML = navigator.connection.effectiveType;
-    networkDownlink.innerHTML = navigator.connection.downlink;
-    navigator.connection.addEventListener('change', (e) => {
-      networkEffectiveType.innerHTML = e.target.effectiveType;
-      networkDownlink.innerHTML = e.target.downlink;
-    })
-    console.log(navigator)
-    // 监听网络状态变化
-    window.addEventListener('online', function () {
-      networkStatus.innerHTML = '在线';
-    });
-
-    window.addEventListener('offline', function () {
-      networkStatus.innerHTML = '离线';
-    });
-
-    // 地理信息处理
-    if (navigator.geolocation) {
-      // navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
-    } else {
-      console.log("您的浏览器不支持地理定位");
-    }
-
-    function successCallback(position) {
-      console.log("获取地理信息成功");
-      var wd = position.coords.latitude;
-      var jd = position.coords.longitude;
-      console.log("纬度：" + wd + "    经度：" + jd);
-    }
-
-    function errorCallback(error) {
-      console.log("获取地理信息失败");
-      console.log(error);
-    }
-
-    // 屏幕信息
-    for (s in screen) {
-      console.log(s + ":" + screen[s])
-    }
-
-    // 电池信息
-    navigator.getBattery().then(function (battery) {
-      console.log("是否在充电:" + battery.charging);
-      console.log("电量比例:" + battery.level);
-      console.log("剩多长时间充满电" + battery.chargingTime);
-      console.log("剩多长时间用完电" + battery.dischargingTime);
-
-      /* 事件 */
-      battery.onchargingchange        // 充电状态放生变化
-      battery.onlevelchange           // 电量发生变化
-      battery.onchargingtimechange    // 充电时长发生变化
-      battery.ondischargingtimechange // 放电时长发生变化
-    });
-
-
-    // 显卡信息/处理器信息
     (function () {
-      var canvas = document.createElement('canvas'),
-        gl = canvas.getContext('experimental-webgl'),
-        debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+      'use strict';
 
-      console.log(gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL));   // 显卡供应商
-      console.log(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL)); // 显卡渲染器
+      // 工具模块
+      const Utils = {
+        /**
+         * 移除文本标点并分割为字符数组
+         * @param {string} text 
+         * @returns {string[]}
+         */
+        removePunctuationAndSplit(text) {
+          const punctuationRegex = /[，。！？；：、“”‘’、\s\n\r\t\u3000\uff0c\uff0e\uff1f\uff01\uff1b\uff1a\u201c\u201d\u2018\u2019\uff08\uff09\u3001\u3002\u3010\u3011\uff5e\uff5c\u2027\u3002\uff61\uff62\u301c\u301d\u301e\u301f\uff01\uff1f\u203c\u2047\u2048\u2049\u300a\u300b\u3008\u3009\u300c\u300d\u300e\u300f\u3014\u3015\u2025\u2026\u2032\u2033\u2034\u2035\u2036\u2037\uff5e\u2018\u2019\u201c\u201d\u2014\u2013\uff0d\u2022\u201a\u201e\u2030\u2031\uff0e\uff5c\u2024\u202f\uff0c\uff01\u3001\uff1b\uff1a\u2026\u2025\u2022\u2027\u2574\u2575\u25cb\u25cf\u25b6\u25c0\u25d7\u25d8\u2660\u2663\u2665\u2666\u2713\u2717\u2720\u2721\u2736\u2737\u274c\u274e\u2757\u2776\u2777\u2795\u2796\u2797\u27b0\u27bf\uffe5\uff04\u3012\u301d\u301e\uff5e\uffe3]/g;
+          return text.replace(punctuationRegex, '').split('');
+        },
+
+        /**
+         * 获取范围内的随机整数
+         */
+        randomInt(max) {
+          return Math.floor(Math.random() * max);
+        }
+      };
+
+      // 应用主逻辑
+      const App = {
+        // 状态管理
+        state: {
+          texts: [], // 存储处理后的诗词字符
+          rainTimer: null
+        },
+
+        // DOM 元素缓存
+        dom: {},
+
+        /**
+         * 初始化入口
+         */
+        init() {
+          this.cacheDOM();
+          this.bindEvents();
+          this.initFirstScreen();
+          this.initSystemInfo();
+        },
+
+        /**
+         * 缓存 DOM 元素
+         */
+        cacheDOM() {
+          this.dom = {
+            firstContainer: document.querySelector('.first-container'),
+            secondContainer: document.querySelector('.second-container'),
+            textWrap: document.querySelector('.text-wrap'),
+            text: document.getElementById('text'),
+            cloud: document.querySelector(".cloud"),
+            bgUp: document.querySelector('.bg.up'),
+            bgDown: document.querySelector('.bg.down'),
+            networkStatus: document.querySelector('#network-status'),
+            networkEffectiveType: document.querySelector('#network-effectiveType'),
+            networkDownlink: document.querySelector('#network-downlink')
+          };
+        },
+
+        /**
+         * 绑定全局事件
+         */
+        bindEvents() {
+          // 首页点击切换事件
+          this.dom.textWrap.addEventListener('click', () => this.handleScreenTransition());
+
+          // 网络状态监听
+          window.addEventListener('online', () => this.updateNetworkUI(true));
+          window.addEventListener('offline', () => this.updateNetworkUI(false));
+
+          if (navigator.connection) {
+            navigator.connection.addEventListener('change', (e) => this.updateConnectionInfo(e.target));
+          }
+        },
+
+        /**
+         * 第一屏初始化：获取诗词
+         */
+        initFirstScreen() {
+          this.fetchPoetry();
+          // 每30秒刷新一次诗词
+          setInterval(() => this.fetchPoetry(), 30000);
+        },
+
+        /**
+         * 获取并展示诗词
+         */
+        fetchPoetry() {
+          if (typeof jinrishici === 'undefined') return;
+
+          jinrishici.load((result) => {
+            const fragment = document.createDocumentFragment();
+            const content = result.data.content || '';
+
+            // 创建逐字显示动画
+            for (let i = 0; i < content.length; i++) {
+              const span = document.createElement('span');
+              span.innerText = content[i];
+              // 错落有致的动画延迟
+              span.style.animationDelay = `${1 + i / 10}s`;
+              fragment.appendChild(span);
+            }
+
+            this.dom.text.innerHTML = '';
+            this.dom.text.appendChild(fragment);
+
+            // 缓存处理后的文本用于第二屏雨滴
+            this.state.texts = Utils.removePunctuationAndSplit(result.data.origin.content.join(''));
+          });
+        },
+
+        /**
+         * 处理屏幕切换动画
+         */
+        handleScreenTransition() {
+          // 添加离场动画类
+          this.dom.bgUp.classList.add('bg-up-leave');
+          this.dom.bgDown.classList.add('bg-down-leave');
+          this.dom.textWrap.classList.add('text-leave');
+
+          // 锁定第一屏防止滚动
+          this.dom.firstContainer.style.overflow = 'hidden';
+          document.body.style.background = '#000';
+
+          // 动画结束后切换 DOM
+          setTimeout(() => {
+            this.dom.firstContainer.remove();
+            this.dom.secondContainer.style.display = 'block';
+
+            // 启动第二屏的文字雨
+            this.startRainEffect();
+          }, 3000);
+        },
+
+        /**
+         * 启动文字雨效果
+         */
+        startRainEffect() {
+          if (this.state.rainTimer) {
+            clearInterval(this.state.rainTimer);
+          }
+          // 每 500ms 生成一个雨滴
+          this.state.rainTimer = setInterval(() => this.createRainDrop(), 500);
+        },
+
+        /**
+         * 创建单个文字雨滴
+         */
+        createRainDrop() {
+          const texts = this.state.texts;
+          if (!Array.isArray(texts) || texts.length === 0) return;
+
+          const textEle = document.createElement("div");
+          const text = texts[Utils.randomInt(texts.length)];
+
+          textEle.innerText = text;
+          textEle.classList.add("cloud-text");
+
+          // 随机样式
+          const left = Utils.randomInt(240);
+          const size = Math.random() * 1.5;
+          const duration = Math.random();
+
+          Object.assign(textEle.style, {
+            left: `${left}px`,
+            fontSize: `${0.5 + size}em`,
+            animationDuration: `${1 + duration}s`,
+          });
+
+          this.dom.cloud.appendChild(textEle);
+
+          // 动画结束后移除元素，防止内存泄漏
+          setTimeout(() => {
+            if (textEle.parentNode) {
+              textEle.parentNode.removeChild(textEle);
+            }
+          }, 10000);
+        },
+
+        /**
+         * 初始化系统信息（网络、电池、硬件等）
+         */
+        initSystemInfo() {
+          // 1. 网络信息
+          this.updateNetworkUI(navigator.onLine);
+          if (navigator.connection) {
+            this.updateConnectionInfo(navigator.connection);
+          }
+
+          // 2. 电池信息
+          if (navigator.getBattery) {
+            navigator.getBattery().then(battery => {
+              this.logBatteryInfo(battery);
+              // 监听电池事件
+              battery.onchargingchange = () => console.log("充电状态变化:", battery.charging);
+              battery.onlevelchange = () => console.log("电量变化:", battery.level);
+            });
+          }
+
+          // 3. 屏幕信息
+          // for (let s in screen) { console.log(`${s}: ${screen[s]}`); }
+
+          // 4. 显卡信息 (WebGL)
+          this.logGPUInfo();
+        },
+
+        updateNetworkUI(isOnline) {
+          if (this.dom.networkStatus) {
+            this.dom.networkStatus.innerHTML = isOnline ? '在线' : '离线';
+          }
+        },
+
+        updateConnectionInfo(connection) {
+          if (this.dom.networkEffectiveType) {
+            this.dom.networkEffectiveType.innerHTML = connection.effectiveType || 'unknown';
+          }
+          if (this.dom.networkDownlink) {
+            this.dom.networkDownlink.innerHTML = connection.downlink || 0;
+          }
+        },
+
+        logBatteryInfo(battery) {
+          console.log("=== 电池信息 ===");
+          console.log("是否在充电:", battery.charging);
+          console.log("电量比例:", battery.level);
+          console.log("充满剩余时间:", battery.chargingTime);
+          console.log("耗尽剩余时间:", battery.dischargingTime);
+        },
+
+        logGPUInfo() {
+          try {
+            const canvas = document.createElement('canvas');
+            const gl = canvas.getContext('experimental-webgl');
+            if (!gl) return;
+
+            const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+            if (debugInfo) {
+              console.log("=== 显卡信息 ===");
+              console.log("供应商:", gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL));
+              console.log("渲染器:", gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL));
+            }
+          } catch (e) {
+            console.warn("无法获取显卡信息", e);
+          }
+        }
+      };
+
+      // 启动应用
+      App.init();
     })();
   </script>
 </body>
